@@ -1,0 +1,13 @@
+
+# Start instances of Caddy, which will be our main web server
+caddy: ulimit -n 8192 && caddy -conf caddy.conf
+
+# Start instances of gunicorn3, each with an instance of the posting microservice
+posting: FLASK_APP=posting_app APP_CONFIG=posting.cfg gunicorn3 --access-logfile - --bind localhost:$PORT posting_app:app
+
+# Start instances of gunicorn3, each with an instance of the voting microservice
+voting: FLASK_APP=voting_app APP_CONFIG=voting.cfg gunicorn3 --access-logfile - --bind localhost:$PORT voting_app:app
+
+# Start instances of gunicorn3, each with an instance of the BFF service
+bff: FLASK_APP=bff_app APP_CONFIG=bff.cfg gunicorn3 --access-logfile - --bind localhost:$PORT bff_app:app
+
